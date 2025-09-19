@@ -1,5 +1,7 @@
 package steps;
 
+import io.cucumber.java.After;
+import io.cucumber.java.Before;
 import io.cucumber.java.pt.Dado;
 import io.cucumber.java.pt.E;
 import io.cucumber.java.pt.Entao;
@@ -23,12 +25,18 @@ public class LoginPinSteps {
 
     public static WebDriver driver;
 
+    @Before
+    public void abrirNavegador() {
+        WebDriverManager.chromedriver().browserVersion("140.0.7339.128").setup();
+        driver = new ChromeDriver();
+        System.out.println("Abrindo");
+    }
+
+
     @Dado("que estou acessando o site")
     public void que_estou_acessando_o_site() {
-
-        WebDriverManager.chromedriver().setup();
-        driver = new ChromeDriver();
         driver.get("https://br.pinterest.com/");
+
     }
     @Quando("eu informo usuario {string}")
     public void euInformoUsuario(String usuario) {
@@ -74,7 +82,7 @@ public class LoginPinSteps {
     @Quando("seleciono uma imagem")
     public void selecionoUmaImagem() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-            WebElement primeiraImagem = driver.findElement(By.tagName("img"));
+            WebElement primeiraImagem = wait.until(ExpectedConditions.elementToBeClickable(By.tagName("img")));
             primeiraImagem.click();
     }
 
@@ -83,10 +91,32 @@ public class LoginPinSteps {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         WebElement botaoSalvar = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[aria-label='Salvar']")));
         botaoSalvar.click();
-        //tentar colocar um texto que mostre que foi salvo...//
+
     }
 
     @Entao("a imagem deve aparecer na pasta")
     public void aImagemDeveAparecerNaPasta() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement confirmacao = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("button[aria-label= 'salvar']")));
+        confirmacao.click();
+    }
+
+    @Quando("eu abrir o meu perfil")
+    public void euAbrirOMeuPerfil() {
+        driver.get("https://br.pinterest.com/fegabriel1313/_pins/");
+
+    }
+
+    @Entao("vejo se tem alguma imagem salva")
+    public void vejoSeTemAlgumaImagemSalva() {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        WebElement imagem = wait.until(ExpectedConditions.visibilityOfElementLocated(By.tagName("img")));
+        assertTrue(imagem.isDisplayed());
+    }
+    @After
+    public void fecharBrower(){
+        driver.quit();
+
+        System.out.println("Terminando");
     }
 }

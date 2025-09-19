@@ -20,4 +20,6 @@
         E salvo em uma pasta
         Entao a imagem deve aparecer na pasta
 
-
+      Cenário: Confirmacao no perfil
+        Quando eu abrir o meu perfil
+        Entao vejo se tem alguma imagem salva
